@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EnergyCalc Pro ⚡</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 min-h-screen pb-10 font-sans text-slate-800">
+
+    <div class="max-w-md mx-auto px-4">
+        <header class="py-6 text-center">
+            <h1 class="text-3xl font-extrabold tracking-tight">Energy<span class="mint-text">Calc</span></h1>
+            <p class="text-slate-500 text-sm">Transparente Energie-Check 💡</p>
+        </header>
+
+        <div class="card p-5 mb-4 border-l-4 mint-border relative">
+            <div class="flex items-center justify-between mb-2">
+                <label class="font-bold text-xs uppercase tracking-widest">Strompreis (Cent/kWh)</label>
+                <button onclick="toggleTooltip('tip-price')" class="mint-text px-2"><i class="fa-solid fa-circle-info"></i></button>
+            </div>
+            <div id="tip-price" class="tooltip-box hidden shadow-lg">Dein Preis laut Stromrechnung (z.B. 40).</div>
+            <input type="number" id="priceCent" value="40" class="w-full border-2 border-slate-100 p-3 rounded-xl focus:mint-border outline-none font-bold text-lg mint-text bg-slate-50">
+        </div>
+
+        <div class="flex bg-white rounded-xl p-1 shadow-sm mb-6 border border-slate-200">
+            <button onclick="showTab('home')" id="btn-home" class="tab-btn active w-1/3 py-2 text-[10px] font-bold rounded-lg transition-all uppercase">🏠 Haushalt</button>
+            <button onclick="showTab('solar')" id="btn-solar" class="tab-btn w-1/3 py-2 text-[10px] font-bold rounded-lg transition-all text-slate-500 uppercase">☀️ Solar</button>
+            <button onclick="showTab('car')" id="btn-car" class="tab-btn w-1/3 py-2 text-[10px] font-bold rounded-lg transition-all text-slate-500 uppercase">🚗 Auto</button>
+        </div>
+
+        <div id="tab-home" class="tab-content text-center">
+            <div class="card p-5 mb-6">
+                <label class="block font-bold mb-3 text-[10px] uppercase tracking-widest">Gerät wählen ✏️</label>
+                <select id="deviceSelect" class="w-full bg-slate-100 p-3 rounded-xl mb-6 outline-none font-medium border-2 border-transparent focus:mint-border" onchange="updateDeviceTemplate()">
+                    <option value="10">💡 LED Lampe (10W)</option>
+                    <option value="100">📺 Fernseher (100W)</option>
+                    <option value="2000">🍳 Wasserkocher (2000W)</option>
+                    <option value="500">💻 Gaming PC (500W)</option>
+                    <option value="0">➕ Eigener Wert</option>
+                </select>
+                <div class="space-y-4 text-left">
+                    <div>
+                        <label class="text-xs font-semibold text-slate-600 block mb-1">Leistung (Watt)</label>
+                        <input type="number" id="wattInput" value="10" class="w-full border-2 border-slate-100 p-3 rounded-xl focus:mint-border outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Stunden pro Tag</label>
+                        <input type="number" id="hoursInput" value="5" class="w-full border-2 border-slate-100 p-3 rounded-xl focus:mint-border outline-none">
+                    </div>
+                </div>
+                <div class="mt-8 grid grid-cols-2 gap-4">
+                    <div class="mint-bg p-4 rounded-2xl border border-mint-light">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold">Kosten / Tag</p>
+                        <p class="text-xl font-bold"><span id="resDay">0.00</span> €</p>
+                    </div>
+                    <div class="mint-bg p-4 rounded-2xl border border-mint-light">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold">Kosten / Jahr</p>
+                        <p class="text-xl font-bold"><span id="resYear">0.00</span> €</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-solar" class="tab-content hidden">
+            <div class="card p-5 border-l-4 mint-border">
+                <h2 class="font-bold mb-4 flex items-center gap-2">☀️ Solar-Check Details</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Anlagengröße (Watt Peak)</label>
+                        <input type="number" id="solarInput" value="600" class="w-full border-2 border-slate-100 p-3 rounded-xl focus:mint-border outline-none bg-slate-50">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1 italic">Sonnige Stunden pro Jahr (Durchschnitt DE: 850)</label>
+                        <input type="number" id="sunHours" value="850" class="w-full border-2 border-slate-100 p-3 rounded-xl focus:mint-border outline-none bg-slate-50">
+                    </div>
+                </div>
+
+                <div class="mt-6 p-5 mint-bg rounded-2xl border border-mint-light relative overflow-hidden">
+                    <p class="text-[10px] text-slate-500 uppercase font-bold tracking-widest text-center">Deine Jahres-Ersparnis</p>
+                    <p class="text-4xl font-black mint-text-dark text-center mt-1"><span id="solarSaveYear">0</span>€</p>
+                    
+                    <div class="mt-4 pt-4 border-t border-white/50 text-[11px] space-y-2">
+                        <p class="font-bold text-slate-600 uppercase text-[9px]">Rechnungsweg:</p>
+                        <p class="flex justify-between italic"><span>Produktion:</span> <span id="calcProd">0</span> kWh/Jahr</p>
+                        <p class="flex justify-between font-bold border-t border-white/30 pt-1"><span>Ersparnis:</span> <span>Produktion × Strompreis</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-car" class="tab-content hidden">
+            <div class="card p-5 border-l-4 mint-border">
+                <h2 class="font-bold mb-6 flex items-center gap-2 text-sm uppercase tracking-wider">🚗 Kosten & Ersparnis</h2>
+                <div class="space-y-5">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-sm">
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-road"></i> Fahrleistung pro Jahr (km)
+                        </label>
+                        <input type="number" id="annualKm" value="10000" class="w-full p-3 rounded-xl border-2 border-white focus:border-mint-light outline-none font-bold">
+                    </div>
+
+                    <div class="bg-blue-50/40 p-4 rounded-2xl border border-blue-100">
+                        <label class="block text-[10px] font-bold text-blue-600 uppercase mb-2">⚡ E-Auto (kWh/100km)</label>
+                        <input type="number" id="evCons" value="18" class="w-full p-3 rounded-xl border-2 border-white focus:border-blue-200 outline-none">
+                    </div>
+
+                    <div class="bg-orange-50/40 p-4 rounded-2xl border border-orange-100">
+                        <label class="block text-[10px] font-bold text-orange-600 uppercase mb-2">⛽ Verbrenner (Spritpreis € & Liter/100km)</label>
+                        <div class="flex gap-2">
+                            <input type="number" id="fuelPrice" value="1.75" step="0.01" class="w-1/2 p-3 rounded-xl border-2 border-white focus:border-orange-200 outline-none" placeholder="€/L">
+                            <input type="number" id="iceCons" value="6.5" class="w-1/2 p-3 rounded-xl border-2 border-white focus:border-orange-200 outline-none" placeholder="L/100km">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="evResult" class="mt-6"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

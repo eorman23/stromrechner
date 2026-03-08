@@ -1,0 +1,30 @@
+body { font-family: 'Inter', -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
+.card { background: white; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); }
+
+/* MINT PASTEL */
+.mint-bg { background-color: #f0faf5; } 
+.mint-text { color: #52b788; }
+.mint-text-dark { color: #2d6a4f; }
+.mint-border { border-color: #52b788 !important; }
+.mint-light { border-color: #d8f3dc; }
+
+.tab-btn.active {
+    background-color: #52b788;
+    color: white;
+    box-shadow: 0 8px 15px rgba(82, 183, 136, 0.25);
+}
+
+.tooltip-box {
+    background: #1b263b;
+    color: white;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    position: absolute;
+    z-index: 50;
+    width: 90%;
+    left: 5%;
+}
+
+input[type="number"] { transition: all 0.2s; border-color: #f1f5f9; }
+input[type="number"]:focus { background: white; }
